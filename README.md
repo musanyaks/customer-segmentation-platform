@@ -2,6 +2,7 @@
 
 > **Production-ready customer analytics in R** — RFM scoring, K-Means ML clustering, and an interactive Shiny dashboard for marketing, retention, and growth teams.
 
+[![CI](https://github.com/musanyaks/customer-segmentation-platform/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/musanyaks/customer-segmentation-platform/actions/workflows/ci.yml)
 [![R Version](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![Shiny](https://img.shields.io/badge/Shiny-Production%20Ready-blue?logo=rstudio&logoColor=white)](https://shiny.posit.co/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
