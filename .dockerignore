@@ -1,0 +1,14 @@
+.git
+.github
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+renv/library/
+tests/
+data/
+deploy/
+*.md
+.Rproj.user/
+*.Rproj
+*.log

@@ -1,0 +1,23 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# renv (tracked: renv.lock, activate.R — ignored: local library)
+renv/library/
+renv/staging/
+renv/sandbox/
+
+# Data (keep the committed sample)
+data/*.csv
+!data/sample_transactions.csv
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Shiny
+shiny-server/
