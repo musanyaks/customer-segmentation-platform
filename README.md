@@ -5,7 +5,7 @@
 [![R Version](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![Shiny](https://img.shields.io/badge/Shiny-Production%20Ready-blue?logo=rstudio&logoColor=white)](https://shiny.posit.co/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)](#-docker-deployment)
+[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker&logoColor=white)](#option-1--docker-recommended)
 
 ---
 
@@ -153,7 +153,7 @@ log_monetary  = log1p(monetary)
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-org>/customer-segmentation-platform.git
+git clone https://github.com/musanyaks/customer-segmentation-platform.git
 cd customer-segmentation-platform
 
 # 2. (Recommended) Restore the pinned environment
@@ -246,21 +246,37 @@ All tunables live at the top of `app.R`:
 
 ```
 customer-segmentation-platform/
-├── app.R                  # Complete application (UI + server + engines)
-├── renv.lock              # Pinned dependencies (renv)
-├── Dockerfile             # Container build (see Deployment)
+├── .Rprofile                  # Activates renv on R startup
+├── .gitignore
 ├── .dockerignore
-├── README.md
+├── app.R                      # Complete application (UI + server + engines)
+├── dependencies.R             # Package list for installs / deploys
+├── Dockerfile                 # Container build (renv restore)
+├── docker-compose.yml         # One-command local container run
 ├── LICENSE
+├── README.md
+├── renv.lock                  # Pinned dependencies (renv)
 ├── data/
-│   └── sample_transactions.csv   # Optional seed data
+│   └── generate_sample_data.R # Synthetic transaction generator
+├── deploy/
+│   └── shiny-server.conf      # Shiny Server config (Linux deployment)
+├── renv/
+│   └── activate.R             # renv bootstrap (library/ is gitignored)
 ├── tests/
-│   └── testthat/          # Unit tests for compute_rfm(), diagnose_k()
-└── deploy/
-    └── shiny-server.conf  # Shiny Server config (Linux deployment)
+│   ├── testthat.R
+│   └── testthat/
+│       ├── setup.R
+│       ├── test-compute_rfm.R
+│       ├── test-feature_matrix.R
+│       ├── test-kmeans.R
+│       ├── test-import.R
+│       └── test-server.R
+└── .github/
+    └── workflows/
+        └── ci.yml             # GitHub Actions CI
 ```
 
-> The app is intentionally **single-file** for easy deployment to Posit Connect and shinyapps.io — no `global.R` / module splitting required.
+> The app is intentionally **single-file** for easy deployment to Posit Connect and shinyapps.io — no `global.R` / module splitting required. Continuous integration runs the `testthat` suite on every push via `.github/workflows/ci.yml`.
 
 ---
 
@@ -283,6 +299,9 @@ CMD ["R", "-e", "shiny::runApp('/srv/shiny-server/app.R', host='0.0.0.0', port=3
 ```bash
 docker build -t customer-segmentation .
 docker run -d -p 3838:3838 customer-segmentation
+
+# or, with Docker Compose
+docker compose up -d --build
 ```
 
 ### Option 2 — Posit Connect
@@ -378,7 +397,7 @@ km  <- run_kmeans(mat, k = 4)              # fitted kmeans object
 
 1. Fork the repo and create a feature branch: `git checkout -b feature/my-improvement`
 2. Follow [tidyverse style](https://style.tidyverse.org/) — run `styler::style_file("app.R")` before committing
-3. Add tests for new logic in `tests/testthat/`
+3. Add tests for new logic in `tests/testthat/` and run them with `Rscript -e 'testthat::test_dir("tests/testthat")'`
 4. Open a PR with a clear description and screenshots for UI changes
 
 ---
