@@ -2,6 +2,8 @@
 
 > **Production-ready customer analytics in R** — RFM scoring, K-Means ML clustering, and an interactive Shiny dashboard for marketing, retention, and growth teams.
 
+🚀 **Live demo:** [https://musanyaks.shinyapps.io/customer-segmentation/](https://musanyaks.shinyapps.io/customer-segmentation/)
+
 [![CI](https://github.com/musanyaks/customer-segmentation-platform/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/musanyaks/customer-segmentation-platform/actions/workflows/ci.yml)
 [![R Version](https://img.shields.io/badge/R-%E2%89%A5%204.1-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![Shiny](https://img.shields.io/badge/Shiny-Production%20Ready-blue?logo=rstudio&logoColor=white)](https://shiny.posit.co/)
@@ -315,6 +317,8 @@ Rscript -e 'rsconnect::deployApp(".", appName = "customer-segmentation")'
 Access control, authentication (SSO/LDAP), and usage metrics are managed via the Connect UI.
 
 ### Option 3 — shinyapps.io
+
+Live deployment: [https://musanyaks.shinyapps.io/customer-segmentation/](https://musanyaks.shinyapps.io/customer-segmentation/)
 
 ```r
 rsconnect::deployApp(".", appName = "customer-segmentation")
