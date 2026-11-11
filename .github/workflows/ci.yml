@@ -22,16 +22,23 @@ jobs:
           r-version: "4.4"
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-renv@v2
-        env:
-          RENV_CONFIG_AUTOLOADER_ENABLED: "false"
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: r-4.4-${{ hashFiles('renv.lock') }}
+
+      - name: Restore packages from renv.lock
+        run: |
+          Rscript -e 'install.packages("renv")'
+          Rscript -e 'renv::restore(library = Sys.getenv("R_LIBS_USER"), prompt = FALSE)'
 
       - name: Run tests
         run: Rscript tests/testthat.R
 
       - name: Lint
         run: |
-          Rscript -e 'if (!requireNamespace("lintr", quietly = TRUE)) install.packages("lintr", repos = "https://cloud.r-project.org")'
+          Rscript -e 'if (!requireNamespace("lintr", quietly = TRUE)) install.packages("lintr")'
           Rscript -e 'lintr::lint("app.R")'
         continue-on-error: true
 
