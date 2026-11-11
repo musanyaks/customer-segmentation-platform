@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04          # pinned so the "noble" URL below matches
     timeout-minutes: 30
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -22,11 +22,18 @@ jobs:
           r-version: "4.4"
           use-public-rspm: true
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libfontconfig1-dev \
+            libfreetype6-dev libfribidi-dev libharfbuzz-dev libjpeg-dev \
+            libpng-dev libtiff-dev libx11-dev pandoc
+
       - name: Cache R packages
         uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: r-4.4-${{ hashFiles('renv.lock') }}
+          key: r-${{ runner.os }}-4.4-${{ hashFiles('renv.lock') }}
 
       - name: Restore packages from renv.lock
         run: |
