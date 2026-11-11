@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RENV_CONFIG_REPOS_OVERRIDE: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
 
     steps:
       - uses: actions/checkout@v4
@@ -20,34 +21,26 @@ jobs:
           r-version: "4.4"
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          packages: |
-            any::shiny
-            any::shinydashboard
-            any::tidyverse
-            any::lubridate
-            any::scales
-            any::plotly
-            any::DT
-            any::cluster
-            any::cachem
-            any::testthat
-            any::lintr
+      - uses: r-lib/actions/setup-renv@v2
 
       - name: Run tests
         run: Rscript tests/testthat.R
 
       - name: Lint
-        run: Rscript -e 'lintr::lint_dir(".")'
+        run: |
+          Rscript -e 'if (!requireNamespace("lintr", quietly = TRUE)) install.packages("lintr", repos = "https://cloud.r-project.org")'
+          Rscript -e 'lintr::lint("app.R")'
         continue-on-error: true
 
       - name: Smoke-test app launch
         run: |
-          Rscript -e '
-            shiny::runApp("app.R", port = 3838, launch.browser = FALSE,
-                          test.mode = TRUE) &
-            Sys.sleep(20)
-            con <- url("http://localhost:3838")
-            open(con); close(con)
-            message("App responded on :3838")'
+          Rscript -e 'shiny::runApp("app.R", port = 3838, launch.browser = FALSE)' &
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3838 > /dev/null; then
+              echo "App responded on :3838"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App did not respond within 60s"
+          exit 1
