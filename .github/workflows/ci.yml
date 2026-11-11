@@ -9,6 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RENV_CONFIG_REPOS_OVERRIDE: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
@@ -22,6 +23,8 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-renv@v2
+        env:
+          RENV_CONFIG_AUTOLOADER_ENABLED: "false"
 
       - name: Run tests
         run: Rscript tests/testthat.R
